@@ -2,6 +2,16 @@
 
 > A Vue.js project
 
+Using Vuex for state management
+Using Vuetify for prebuilt reusable components with styling
+Using material-design-icons-iconfont for nice little icons
+Using vue-router routing though there is only one route
+Using webpack for bundling
+Using jest for unit testing, no tests created
+Using nightwatch for end-to-end testing, no tests created
+
+Would use Axios for api calls, however have not brought it in because there is no backend.
+
 ## Build Setup
 
 ``` bash
@@ -28,5 +38,4 @@ npm test
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
-# toVueApp
 # vueDoApp
