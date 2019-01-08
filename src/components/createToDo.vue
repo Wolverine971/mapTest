@@ -1,5 +1,5 @@
 <template>
-  <v-form v-model="valid" ref="form" lazy-validation>
+  <v-form v-model="valid" ref="form" >
     <v-container>
       <v-layout>
         <v-flex xs12 md4>
@@ -9,9 +9,6 @@
           <v-text-field v-model="name" :counter="100" label="Name" required :rules="nameRules"></v-text-field>
         </v-flex>
         <v-btn :disabled="!valid" color="blue" small @click.prevent="submitTodo" @keydown.enter="submitTodo">
-            <v-icon v-show="valid">
-              add_circle
-            </v-icon>
           Submit
         </v-btn>
         <v-btn color="blue-grey" small @click="reset">
