@@ -1,5 +1,6 @@
 <template>
   <div class="home-page">
+    <rheader />
     <div class="banner">
       <div class="container">
         <h1 class="logo-font">Todo List</h1>
@@ -59,6 +60,7 @@
         </v-flex> -->
       </div>
     </div>
+    <rfooter />
   </div>
 </template>
 
@@ -67,13 +69,17 @@
 // import { FETCH_TAGS } from "@/store/actions.type";
 import createToDo from "./createToDo"
 import listOfTodos from "./listOfToDos"
+import rheader from "./header";
+import rfooter from "./footer";
 // import _ from 'lodash';   
 //import toDoVue from './toDo.vue';
 export default {
   name: "home",
   components: {
       createToDo,
-      listOfTodos
+      listOfTodos,
+      rheader,
+      rfooter
   },
   // data() {
   //     return{
