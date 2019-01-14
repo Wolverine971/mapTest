@@ -1,7 +1,7 @@
 {
-  "name": "djvuedo",
+  "name": "djmapbx",
   "version": "1.0.0",
-  "description": "A Vue.js project",
+  "description": "Vue app, playing with mapbox and leaflet",
   "author": "dj",
   "private": true,
   "scripts": {
