@@ -1,4 +1,4 @@
-# djvuedo
+# djmapBx
 
 > A Vue.js project
 
@@ -9,6 +9,18 @@ Using vue-router routing though there is only one route
 Using webpack for bundling
 Using jest for unit testing, no tests created
 Using nightwatch for end-to-end testing, no tests created
+Using MapBox_GL for maps
+Using Leaflet as a map plugin
+
+You will need a mapbox access token
+https://www.mapbox.com/help/glossary/access-token/
+Once you have one navigate to /config/dev.env.js and add it as MAP_KEY: blablabla
+also note that it will begin with the letters "pk"
+Navigate to /map to see the map
+
+I followed the quickstart tutorial:
+https://leafletjs.com/examples/quick-start/
+
 
 Would use Axios for api calls, however have not brought it in because there is no backend.
 
