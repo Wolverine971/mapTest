@@ -1,7 +1,7 @@
 <template>
 <!-- <div> -->
 
-    <v-toolbar style="">
+    <v-toolbar style="z-index: 500;">
     <v-toolbar-side-icon></v-toolbar-side-icon>
     <v-toolbar-title>{{title}}</v-toolbar-title>
     <v-spacer></v-spacer>
@@ -24,15 +24,15 @@
             :leave="leave"
           >
       <v-toolbar-items class="hidden-sm-and-down" 
-        v-for="item in items"
+        v-for="item in itemz"
         :key="item.title"
         @click="handleNavClick(item.title)"
-        v-if="(item.type !== 'map' && !myMap) || (item.type == 'map' && myMap)">
+        >
         <v-btn flat>{{ item.title }}</v-btn>
       </v-toolbar-items>
     </transition-group>
   </v-toolbar>
-
+<!-- v-if="(item.type !== 'map' && !myMap) || (item.type == 'map' && myMap)" -->
 <!-- <v-card class="d-inline-block elevation-12" style="position: absolute !important; 
     top: 0 !important;
     right: 0 !important;
@@ -3183,6 +3183,14 @@ import L from 'leaflet'
         }
     },
     computed:{
+      itemz(){
+        let itemzz = this.items.filter(item =>{
+          if((item.type !== 'map' && !this.myMap) || (item.type == 'map' && this.myMap))
+            return item
+        })
+        return itemzz
+        //if="(item.type !== 'map' && !myMap) || (item.type == 'map' && myMap)"
+      },
       title(){
         if(this.myMap){
           return "MAP"

@@ -4,37 +4,30 @@
     :items="typeaheadSuggestions"
     :search-input.sync="typedText"
     hide-selected
-    @keydown.enter.native="search"
+    @keydown.enter.native.prevent="search"
     placeholder="Address Lookup"
     append-icon="accessibility"
     attach
-    auto-grow
     solo 
     flex 
     no-filter
     flat
     height="-webkit-fill-available"
-    clearable
-    return-object
+    class="combo"
 
   >
-    <!-- <template slot="no-data">
+    <template slot="no-data">
       <v-list-tile>
-        <span class="subheading">Create</span>
-        <v-chip
-          :color="`${colors[nonce - 1]} lighten-3`"
-          label
-          small
-        >
-          {{ search }}
-        </v-chip>
+        <span class="subheading">No Suggestion</span>
       </v-list-tile>
-    </template> -->
+    </template>
     <template slot="item" slot-scope="typeaheadSuggestions">
-      <div >Suggest</div>
+      <template v-if="typeaheadSuggestions && typeaheadSuggestions.item" class="combo">
+        <div class="combo" @click="search(typeaheadSuggestions.item.address.formattedAddress)" @keydown.enter.native="search(typeaheadSuggestions.item.address.formattedAddress)" >{{typeaheadSuggestions.item.address.formattedAddress}}</div>
+      </template>
     </template>
 
-    <!-- <template
+    <!-- <template  .address.formattedAddress
       v-if="item === Object(item)"
       slot="selection"
       slot-scope="{ item, parent, selected }"
@@ -50,8 +43,8 @@
 </template>
 
 <script>
-import _ from 'lodash' 
-import api from '../../api/generic.js'
+import _ from 'underscore' 
+import api from '@/api/generic'
   export default {
     name: "searchBar",
 
@@ -105,58 +98,70 @@ import api from '../../api/generic.js'
       goToPlace(req){
 
       },
-      search(){
-        //this.$store.dispatch('setTime')
-
-        api.getVectorTile(this.model)
-        
-        //api.archGis(this.model)
-        
-        .then(response =>{
-            if(response){
-                console.log(response)
+      search(text){
+        let data;
+        if(this.model && this.model.address){
+          data = this.model.address.formattedAddress 
+          //data = text
+        }
+        else{
+          //this.$store.dispatch('setTime')
+          data = this.model
+        }
+        if(this.model.address && this.model.adminDistrict2 || this.model.locality){
+          api.getTigerCounty(this.model.adminDistrict2).then(response => {
+            // console.log(response)
+            //let parsed = JSON.parse(response)
+            if(response.features.length > 1){
+              let parsedGeos = response.features[0].geometry.rings
+              //let parsedGeo = response.features[0].geometry.coordinates
+              this.$store.commit("setMultipleGeoForMap", parsedGeos)
             }
-            
+            else{
+              let parsedGeo = response.features[0].geometry.rings
+              //let parsedGeo = response.features[0].geometry.coordinates
+              this.$store.commit("setGeoForMap", parsedGeo)
+            }
+          })
+          .catch(e => {throw new Error(e)})
+          .finally(() => {
+            this.suggestions = null
+            this.model = this.model.adminDistrict2
+          })
+
+        }
+            //getVectorTile
+        
+        else{
+          api.getTigerState(this.model.address.formattedAddress).then(response => {
+          // console.log(response)
+          //let parsed = JSON.parse(response)
+          //let parsedGeo = response.features[0].geometry.rings
+          let parsedGeo = response.features[0].geometry.coordinates
+          this.$store.commit("setGeoForMap", parsedGeo)
         })
         .catch(e => {throw new Error(e)})
+        .finally(() => {
+          this.suggestions = null
+          this.model = this.model.address.formattedAddress
+        })
+        }
         
-
-
-        // api.geoCodeSearch(address).then(response=>{
-            
-        // })
-        // .catch(e => {throw new Error(e)})
-        
-        // .finally(() => (this.isLoading = false))
       }
     },
     computed:{
         typeaheadSuggestions(){
+          console.log(this.suggestions)
             return this.suggestions
         }
     },
     watch: {
-    //   model (val, prev) {
-    //     if (val.length === prev.length) return
-
-    //     this.model = val.map(v => {
-    //       if (typeof v === 'string') {
-    //         v = {
-    //           text: v,
-    //           color: this.colors[this.nonce - 1]
-    //         }
-
-    //         this.items.push(v)
-
-    //         this.nonce++
-    //       }
-
-    //       return v
-    //     })
-    //  },
       typedText: _.debounce(function (text, prev) {
         // search must not be the same as the previous text
-        return
+        // return
+        if(text == prev){
+          return
+        }
         if ((text && prev && text.length === prev.length) || (text === null || text.length === 0)){
           return
         }
@@ -164,10 +169,7 @@ import api from '../../api/generic.js'
         if (text.length >= 3 
           //& & text !== this.$store.state.searchText
           ) {
-          // Items have already been requested
-          // if (this.isLoading) return
-
-          // this.isLoading = true
+          // http://dev.virtualearth.net/REST/v1/Locations?query=locationQuery&key=BingMapsKey
 
           // "https://data.census.gov/api/typeahead"
 
@@ -175,15 +177,34 @@ import api from '../../api/generic.js'
 
           //The bounds parameter defines the latitude/longitude coordinates of the southwest and northeast corners of this bounding box using a pipe (|) character to separate the coordinates.
           //need a bounds param which is |
-          api.typeahead(text)
+          api.bingLocation(text)
           .then(response=>{
+            this.suggestions = response.resourceSets[0].resources[0].value
+            console.log(this.suggestions)
 
           })
           .catch(e => {throw new Error(e)})
           
           .finally(() => (this.isLoading = false))
         }
-      }, 300)
+      }, 500),
+      // model:function (text, prev){
+      //   if(text == prev){
+      //     return
+      //   }
+      //   if(text == Object(text)){
+      //     return text.address.formattedAddress 
+      //   }
+      //   else{
+      //     return text
+      //   }
+      // }
     }
   }
 </script>
+<style lang="css">
+
+.combo{
+      z-index: 800
+}
+</style>

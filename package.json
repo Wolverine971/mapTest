@@ -20,6 +20,7 @@
     "axios": "^0.18.0",
     "body-parser": "^1.18.3",
     "cors": "^2.8.5",
+    "curl-request": "^1.1.1",
     "express": "^4.16.4",
     "jscs": "^3.0.7",
     "leaflet": "^1.4.0",

@@ -25,6 +25,21 @@ export default {
             myMap: null
         }
     },
+    computed:{
+        newGeo(){
+            return this.$store.getters.newGeo
+        },
+        newGeoNum(){
+            return this.$store.getters.newGeoNum
+        },
+        newMultiGeoNum(){
+            return this.$store.getters.newMultiGeoNum
+        },
+        newMultiGeo(){
+            return this.$store.getters.newMultiGeo
+        }
+
+    },
     methods:{
         // renderMap: function(){
         //     this.myMap = L.map('mapid',{ center: [38.911552736237624, -500.1084892846185], zoom: 10})
@@ -58,11 +73,30 @@ export default {
                 }
             })
         },
+        setGeo(){
+            this.recurseArr(this.newGeo)
+            //this.floridaPoly
+            var line = L.polygon( this.newGeo, {color: 'red'}).addTo(this.myMap);
+            //var circle = this.myMap.circle( center, { renderer: myRenderer } );
+            this.myMap.flyToBounds(line.getBounds())
+        },
+        setMultiGeo(){
+            let polys = []
+            newMultiGeo.forEach(item => {
+                this.recurseArr(item.geometry.rings)
+                let poly = L.polygon( item.geometry.rings, {color: 'blue'}).addTo(this.myMap);
+                polys.push(poly)
+                L.circle(poly.getCenter(), {radius: 200, color: green}).addTo(this.myMap);
+            })
+
+            this.myMap.fitBounds(polys.getBounds());
+        }
         
 
     },
     mounted(){
         // 38.97649255070067, lng: -76.84675534064796
+        console.log(process.env.MAP_KEY)
          this.myMap = L.map('mapid',{ center: [38.97649255070067, -76.84675534064796], zoom: 9, renderer: L.svg()})
         //.setView([51.505, -0.09], 13);
         L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
@@ -76,6 +110,16 @@ export default {
 
     },
     watch:{
+        newGeoNum(newVal, oldVal){
+            if(newVal !== oldVal){
+                this.setGeo()
+            }
+        },
+        newMultiGeoNum(newVal, oldVal){
+            if(newVal !== oldVal){
+                this.setMultiGeo()
+            }
+        }
 
     }
 

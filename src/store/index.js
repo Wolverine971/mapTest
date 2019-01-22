@@ -7,13 +7,27 @@ Vue.use(Vuex)
 const state = {
   // [{name: "" id: ''}]
   toDos: [],
-  lastReqTime: null
+  lastReqTime: null,
+  newGeo: null,
+  newGeoNum: null,
+  newMultiGeoNum: null,
+  newMultiGeo: null
 }
 
 const getters = {
   toDos: (state) => {
     return state.toDos
+  },
+  newGeo: (state) => {
+    return state.newGeo
+  },
+  newGeoNum:(state) => {
+    return state.newGeo
+  },
+  newMultiGeo: (state) => {
+    return state.newMultiGeo
   }
+
 
 }
 
@@ -32,6 +46,9 @@ const actions = {
     } else {
       console.log('within time for archGis')
     }
+  },
+  goToGeo(state){
+
   }
 
 }
@@ -63,7 +80,17 @@ const mutations = {
         todos.done = !item.done
       }
     })
+  },
+  setGeoForMap(state, geo){
+    state.newGeoNum = Math.random()
+    state.newGeo = geo;
+  },
+  setMultipleGeoForMap(state, geos){
+    state.newMultiGeoNum = Math.random()
+    state.newMultiGeo = geos;
   }
+
+
 }
 
 export default new Vuex.Store({
